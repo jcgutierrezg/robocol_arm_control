@@ -41,8 +41,19 @@ class ATTinyI2C(Node):
         steps2 = int(round(angle2*46.656*200.0/360.0))
         steps3 = int(round(angle3*46.656*200.0/360.0))
         steps4 = int(round(angle4*19.203*200.0/360.0))
-        steps5 = int(round(angle5*20.0*200.0/360.0))
+        steps5 = int(round(angle5*46.656*200.0/360.0))
         steps6 = int(round(angle6*19.203*200.0/360.0))
+
+        print(steps1)
+        print(steps2)
+        print(steps3)
+        print(steps4)
+        print(steps5)
+        print(steps6)
+
+        Direccion1 = 0b00010001
+        Direccion2 = 0b00010001
+        Direccion3 = 0b00010001
 
 # Motor 1 y 2
 
@@ -53,22 +64,24 @@ class ATTinyI2C(Node):
           Direccion1=0b00110001
 
         elif(steps2>0 and steps1 == 0):
-          Direccion1=0b00010001
+          Direccion1=0b00010011
 
         elif(steps2<0 and steps1 == 0):
-          Direccion1=0b00010011
-
-        elif(steps2>0 and steps1 > 0):
           Direccion1=0b00010001
 
-        elif(steps2<0 and steps1 > 0):
+        elif(steps2>0 and steps1 > 0):
           Direccion1=0b00010011
 
+        elif(steps2<0 and steps1 > 0):
+          Direccion1=0b00010001
+
         elif(steps2>0 and steps1 < 0):
-          Direccion1=0b00110001
+          Direccion1=0b00110011
 
         elif(steps2<0 and steps1 < 0):
-          Direccion1=0b00110011
+          Direccion1=0b00110001
+
+        print(Direccion1)
 
 # Motor 3 y 4
 
@@ -79,48 +92,55 @@ class ATTinyI2C(Node):
           Direccion2=0b00110001
 
         elif(steps4>0 and steps3 == 0):
-          Direccion2=0b00010001
+          Direccion2=0b00010011
 
         elif(steps4<0 and steps3 == 0):
-          Direccion2=0b00010011
-
-        elif(steps4>0 and steps3 > 0):
           Direccion2=0b00010001
 
-        elif(steps4<0 and steps3 > 0):
+        elif(steps4>0 and steps3 > 0):
           Direccion2=0b00010011
 
+        elif(steps4<0 and steps3 > 0):
+          Direccion2=0b00010001
+
         elif(steps4>0 and steps3 < 0):
-          Direccion2=0b00110001
+          Direccion2=0b00110011
 
         elif(steps4<0 and steps3 < 0):
-          Direccion2=0b00110011
+          Direccion2=0b00110001
 
 # Motor 5 y 6
 
         if(steps5>0 and steps6 == 0):
-          Direccion3=0b00010001
+          Direccion3=0b00110001
 
         elif(steps5<0 and steps6 == 0):
-          Direccion3=0b00110001
+          Direccion3=0b00010001
 
         elif(steps6>0 and steps5 == 0):
-          Direccion3=0b00010001
+          Direccion3=0b00110011
 
         elif(steps6<0 and steps5 == 0):
-          Direccion3=0b00010011
-
-        elif(steps6>0 and steps5 > 0):
-          Direccion3=0b00010001
-
-        elif(steps6<0 and steps5 > 0):
-          Direccion3=0b00010011
-
-        elif(steps6>0 and steps5 < 0):
           Direccion3=0b00110001
 
-        elif(steps6<0 and steps5 < 0):
+        elif(steps6>0 and steps5 > 0):
           Direccion3=0b00110011
+
+        elif(steps6<0 and steps5 > 0):
+          Direccion3=0b00110001
+
+        elif(steps6>0 and steps5 < 0):
+          Direccion3=0b00010011
+
+        elif(steps6<0 and steps5 < 0):
+          Direccion3=0b00010001
+
+        steps1 = abs(steps1)
+        steps2 = abs(steps2)
+        steps3 = abs(steps3)
+        steps4 = abs(steps4)
+        steps5 = abs(steps5)
+        steps6 = abs(steps6)
 
 # Motor 1 y 2
 
@@ -132,42 +152,47 @@ class ATTinyI2C(Node):
             "pasos2": steps2
           }
 
-        if(steps1 ~= 0 and steps2 ~= 0):
+        if(steps1 != 0 or steps2 != 0):
           try:
-              bus = SMBus(3)
+              print("Steps1: " + str(steps1))
+              print("Steps2: " + str(steps2))
+              print(Direccion1)
+              bus = SMBus(1)
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("1: ")
-              print(lista_strings["direccion"])
+              #print("1: ")
+              #print(lista_strings["direccion"])
               
               bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("2: ")
-              print(lista_strings["pasos1"] >> 8 & 0xff)
+              #print("2: ")
+              #print(lista_strings["pasos1"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("3: ")
-              print(lista_strings["pasos1"] & 0xff)
+              #print("3: ")
+              #print(lista_strings["pasos1"] & 0xff)
               
               bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("4: ")
-              print(lista_strings["pasos2"] >> 8 & 0xff)
+              #print("4: ")
+              #print(lista_strings["pasos2"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("5: ")
-              print(lista_strings["pasos2"] & 0xff)
+              #print("5: ")
+              #print(lista_strings["pasos2"] & 0xff)
               
               
           except Exception as e:
-              pass
+              print(e)
+
+          print("Bytes sent to 0x23!")
         
 # Motor 3 y 4
 
@@ -179,43 +204,49 @@ class ATTinyI2C(Node):
             "pasos4": steps4
           }
 
-        if(steps3 ~= 0 and steps4 ~= 0):
+        if(steps3 != 0 or steps4 != 0):
           try:
-              bus = SMBus(3)
+
+              print("Steps3: " + str(steps3))
+              print("Steps4: " + str(steps4))
+              print(Direccion2)
+
+              bus = SMBus(1)
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("1: ")
-              print(lista_strings["direccion"])
+              #print("1: ")
+              #print(lista_strings["direccion"])
               
               bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("2: ")
-              print(lista_strings["pasos3"] >> 8 & 0xff)
+              #print("2: ")
+              #print(lista_strings["pasos3"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos3"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("3: ")
-              print(lista_strings["pasos3"] & 0xff)
+              #print("3: ")
+              #print(lista_strings["pasos3"] & 0xff)
               
               bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("4: ")
-              print(lista_strings["pasos4"] >> 8 & 0xff)
+              #print("4: ")
+              #print(lista_strings["pasos4"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos4"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("5: ")
-              print(lista_strings["pasos4"] & 0xff)
+              #print("5: ")
+              #print(lista_strings["pasos4"] & 0xff)
               
               
           except Exception as e:
               pass
 
+          print("Bytes sent to 0x24!")
 
 # Motor 5 y 6
 
@@ -227,42 +258,48 @@ class ATTinyI2C(Node):
             "pasos6": steps6
           }
 
-        if(steps5 ~= 0 and steps6 ~= 0):
+        if(steps5 != 0 or steps6 != 0):
           try:
-              bus = SMBus(3)
+              print("Steps5: " + str(steps5))
+              print("Steps6: " + str(steps6))
+              print(Direccion3)
+
+              bus = SMBus(1)
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("1: ")
-              print(lista_strings["direccion"])
+              #print("1: ")
+              #print(lista_strings["direccion"])
               
               bus.write_byte(address, lista_strings["pasos5"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("2: ")
-              print(lista_strings["pasos5"] >> 8 & 0xff)
+              #print("2: ")
+              #print(lista_strings["pasos5"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos5"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("3: ")
-              print(lista_strings["pasos5"] & 0xff)
+              #print("3: ")
+              #print(lista_strings["pasos5"] & 0xff)
               
               bus.write_byte(address, lista_strings["pasos6"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("4: ")
-              print(lista_strings["pasos6"] >> 8 & 0xff)
+              #print("4: ")
+              #print(lista_strings["pasos6"] >> 8 & 0xff)
               
               bus.write_byte(address, lista_strings["pasos6"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              print("5: ")
-              print(lista_strings["pasos6"] & 0xff)
+              #print("5: ")
+              #print(lista_strings["pasos6"] & 0xff)
               
               
           except Exception as e:
               pass
+
+          print("Bytes sent to 0x25!")
 
         #if(gripper == 1.0):
           #cosaparaqueswitcheeellaser()
