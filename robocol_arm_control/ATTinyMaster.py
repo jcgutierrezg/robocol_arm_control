@@ -8,6 +8,7 @@ from rclpy.node import Node
 import math
 
 from geometry_msgs.msg import Pose
+from std_msgs.msg import Bool
  
 gripperState = 1.0
 laserState = 0.0
@@ -19,6 +20,7 @@ class ATTinyI2C(Node):
     def __init__(self):
         super().__init__('attiny_i2c')
         gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
+        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',1)
         self.subscription = self.create_subscription(
             Pose,
             'ATTinyinfo',
@@ -31,6 +33,8 @@ class ATTinyI2C(Node):
         #self.get_logger().info('I heard: "%s"' % msg.data)
 
         global gripperState, laserState
+
+        ACK = true
 
         angle1 = msg.position.x
         angle2 = msg.position.y
@@ -313,7 +317,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            ser.write(comandoBytes)
+            gripperSer.write(comandoBytes)
             time.sleep(0.1)
 
           elif(laserState == 0.0):
@@ -322,7 +326,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            ser.write(comandoBytes)
+            gripperSer.write(comandoBytes)
             time.sleep(0.1)
           pass
 
@@ -334,7 +338,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            ser.write(comandoBytes)
+            gripperSer.write(comandoBytes)
             time.sleep(0.1)
 
           elif(gripperState == 0.0):
@@ -343,8 +347,22 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            ser.write(comandoBytes)
+            gripperSer.write(comandoBytes)
             time.sleep(0.1)
+
+
+
+          if(ACK):
+
+            time.sleep(2.0)
+
+            msg = Bool()
+
+            msg.data = True
+
+            self.ACKflagPub.publish(msg)
+
+
 
 
 def main(args=None):
