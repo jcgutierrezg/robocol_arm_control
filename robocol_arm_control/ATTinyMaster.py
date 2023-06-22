@@ -2,13 +2,15 @@ import os
 from smbus2 import SMBus
 os.environ['DISPLAY']=':0.0'
 import time
-
+import serial
 import rclpy
 from rclpy.node import Node
 import math
 
 from geometry_msgs.msg import Pose
  
+gripperState = 1.0
+laserState = 0.0
 
 #nom nom nom
 
@@ -16,6 +18,7 @@ class ATTinyI2C(Node):
 
     def __init__(self):
         super().__init__('attiny_i2c')
+        gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
         self.subscription = self.create_subscription(
             Pose,
             'ATTinyinfo',
@@ -27,7 +30,8 @@ class ATTinyI2C(Node):
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
 
-        
+        global gripperState, laserState
+
         angle1 = msg.position.x
         angle2 = msg.position.y
         angle3 = msg.position.z
@@ -301,11 +305,46 @@ class ATTinyI2C(Node):
 
           print("Bytes sent to 0x25!")
 
-        #if(gripper == 1.0):
+        if(gripper == 1.0):
           #cosaparaqueswitcheeellaser()
+          if(laserState == 1.0):
 
-        #elif(gripper == 2.0):
-          #cosaparaqueswitcheeelgripper()
+            comando = "off"
+
+            comandoBytes = comando.encode()
+            #print("\n")
+            ser.write(comandoBytes)
+            time.sleep(0.1)
+
+          elif(laserState == 0.0):
+
+            comando = "on"
+
+            comandoBytes = comando.encode()
+            #print("\n")
+            ser.write(comandoBytes)
+            time.sleep(0.1)
+          pass
+
+        elif(gripper == 2.0):
+
+          if(gripperState == 1.0):
+
+            comando = "c"
+
+            comandoBytes = comando.encode()
+            #print("\n")
+            ser.write(comandoBytes)
+            time.sleep(0.1)
+
+          elif(gripperState == 0.0):
+
+            comando = "a"
+
+            comandoBytes = comando.encode()
+            #print("\n")
+            ser.write(comandoBytes)
+            time.sleep(0.1)
 
 
 def main(args=None):
@@ -320,6 +359,7 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     attiny_i2c.destroy_node()
     rclpy.shutdown()
+    ser.close()
 
 
 if __name__ == '__main__':
