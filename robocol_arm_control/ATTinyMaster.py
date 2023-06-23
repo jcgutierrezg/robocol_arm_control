@@ -161,45 +161,77 @@ class ATTinyI2C(Node):
           }
 
         if(steps1 != 0 or steps2 != 0):
-          try:
-              print("Steps1: " + str(steps1))
-              print("Steps2: " + str(steps2))
-              print(Direccion1)
-              bus = SMBus(1)
+          print("Steps1: " + str(steps1))
+          print("Steps2: " + str(steps2))
+          print(Direccion1)
+
+          bus = SMBus(1)
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("1: ")
               #print(lista_strings["direccion"])
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte1")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("2: ")
               #print(lista_strings["pasos1"] >> 8 & 0xff)
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte2")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("3: ")
               #print(lista_strings["pasos1"] & 0xff)
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte3")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("4: ")
               #print(lista_strings["pasos2"] >> 8 & 0xff)
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte4")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("5: ")
               #print(lista_strings["pasos2"] & 0xff)
-              
-              
-          except Exception as e:
+              tempFlag = True
+            except Exception as e:
               print(e)
-
+              print("Resending Byte5")
+          
           print("Bytes sent to 0x23!")
         
 # Motor 3 y 4
@@ -211,49 +243,80 @@ class ATTinyI2C(Node):
             "pasos3": steps3,
             "pasos4": steps4
           }
+          bus = SMBus(1)
 
         if(steps3 != 0 or steps4 != 0):
-          try:
 
-              print("Steps3: " + str(steps3))
-              print("Steps4: " + str(steps4))
-              print(Direccion2)
+          print("Steps3: " + str(steps3))
+          print("Steps4: " + str(steps4))
+          print(Direccion2)
 
-              bus = SMBus(1)
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("1: ")
               #print(lista_strings["direccion"])
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte1")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("2: ")
-              #print(lista_strings["pasos3"] >> 8 & 0xff)
-              
+              #print(lista_strings["pasos1"] >> 8 & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte2")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos3"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("3: ")
-              #print(lista_strings["pasos3"] & 0xff)
-              
+              #print(lista_strings["pasos1"] & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte3")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("4: ")
-              #print(lista_strings["pasos4"] >> 8 & 0xff)
-              
+              #print(lista_strings["pasos2"] >> 8 & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte4")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos4"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("5: ")
-              #print(lista_strings["pasos4"] & 0xff)
+              #print(lista_strings["pasos2"] & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte5")
               
               
-          except Exception as e:
-              pass
-
           print("Bytes sent to 0x24!")
 
 # Motor 5 y 6
@@ -265,47 +328,77 @@ class ATTinyI2C(Node):
             "pasos5": steps5,
             "pasos6": steps6
           }
+          bus = SMBus(1)
 
         if(steps5 != 0 or steps6 != 0):
-          try:
-              print("Steps5: " + str(steps5))
-              print("Steps6: " + str(steps6))
-              print(Direccion3)
+          print("Steps5: " + str(steps5))
+          print("Steps6: " + str(steps6))
+          print(Direccion3)
 
-              bus = SMBus(1)
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("1: ")
               #print(lista_strings["direccion"])
-              
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte1")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos5"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("2: ")
-              #print(lista_strings["pasos5"] >> 8 & 0xff)
-              
+              #print(lista_strings["pasos1"] >> 8 & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte2")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos5"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("3: ")
-              #print(lista_strings["pasos5"] & 0xff)
-              
+              #print(lista_strings["pasos1"] & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte3")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos6"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("4: ")
-              #print(lista_strings["pasos6"] >> 8 & 0xff)
-              
+              #print(lista_strings["pasos2"] >> 8 & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte4")
+
+          tempFlag = False
+          while(!tempFlag):
+            try:
               bus.write_byte(address, lista_strings["pasos6"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               #print("5: ")
-              #print(lista_strings["pasos6"] & 0xff)
-              
-              
-          except Exception as e:
-              pass
+              #print(lista_strings["pasos2"] & 0xff)
+              tempFlag = True
+            except Exception as e:
+              print(e)
+              print("Resending Byte5")
 
           print("Bytes sent to 0x25!")
 
