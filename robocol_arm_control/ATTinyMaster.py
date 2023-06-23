@@ -20,7 +20,7 @@ class ATTinyI2C(Node):
     def __init__(self):
         super().__init__('attiny_i2c')
         #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
-        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',1)
+        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
         self.subscription = self.create_subscription(
             Pose,
             'ATTinyinfo',
@@ -34,7 +34,7 @@ class ATTinyI2C(Node):
 
         global gripperState, laserState
 
-        ACK = true
+        ACK = True
 
         angle1 = msg.position.x
         angle2 = msg.position.y
@@ -243,7 +243,7 @@ class ATTinyI2C(Node):
             "pasos3": steps3,
             "pasos4": steps4
           }
-          bus = SMBus(1)
+        bus = SMBus(1)
 
         if(steps3 != 0 or steps4 != 0):
 
@@ -328,7 +328,7 @@ class ATTinyI2C(Node):
             "pasos5": steps5,
             "pasos6": steps6
           }
-          bus = SMBus(1)
+        bus = SMBus(1)
 
         if(steps5 != 0 or steps6 != 0):
           print("Steps5: " + str(steps5))
@@ -445,15 +445,15 @@ class ATTinyI2C(Node):
 
 
 
-          if(ACK):
+        if(ACK):
 
-            time.sleep(2.0)
+          time.sleep(2.0)
 
-            msg = Bool()
+          msg = Bool()
 
-            msg.data = True
+          msg.data = True
 
-            self.ACKflagPub.publish(msg)
+          self.ACKflagPub.publish(msg)
 
 
 
@@ -470,7 +470,7 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     attiny_i2c.destroy_node()
     rclpy.shutdown()
-    ser.close()
+    gripperSer.close()
 
 
 if __name__ == '__main__':
