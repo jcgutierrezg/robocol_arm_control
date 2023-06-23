@@ -19,7 +19,7 @@ class ATTinyI2C(Node):
 
     def __init__(self):
         super().__init__('attiny_i2c')
-        gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
+        #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
         self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',1)
         self.subscription = self.create_subscription(
             Pose,
@@ -168,7 +168,7 @@ class ATTinyI2C(Node):
           bus = SMBus(1)
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
@@ -181,7 +181,7 @@ class ATTinyI2C(Node):
               print("Resending Byte1")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -194,7 +194,7 @@ class ATTinyI2C(Node):
               print("Resending Byte2")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
@@ -207,7 +207,7 @@ class ATTinyI2C(Node):
               print("Resending Byte3")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -220,7 +220,7 @@ class ATTinyI2C(Node):
               print("Resending Byte4")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
@@ -252,7 +252,7 @@ class ATTinyI2C(Node):
           print(Direccion2)
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
@@ -265,7 +265,7 @@ class ATTinyI2C(Node):
               print("Resending Byte1")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -278,7 +278,7 @@ class ATTinyI2C(Node):
               print("Resending Byte2")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos3"] & 0xff)
               #time.sleep(0.1)
@@ -291,7 +291,7 @@ class ATTinyI2C(Node):
               print("Resending Byte3")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -304,7 +304,7 @@ class ATTinyI2C(Node):
               print("Resending Byte4")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos4"] & 0xff)
               #time.sleep(0.1)
@@ -336,7 +336,7 @@ class ATTinyI2C(Node):
           print(Direccion3)
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
               #time.sleep(0.1)
@@ -349,7 +349,7 @@ class ATTinyI2C(Node):
               print("Resending Byte1")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos5"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -362,7 +362,7 @@ class ATTinyI2C(Node):
               print("Resending Byte2")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos5"] & 0xff)
               #time.sleep(0.1)
@@ -375,7 +375,7 @@ class ATTinyI2C(Node):
               print("Resending Byte3")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos6"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -388,7 +388,7 @@ class ATTinyI2C(Node):
               print("Resending Byte4")
 
           tempFlag = False
-          while(!tempFlag):
+          while(not tempFlag):
             try:
               bus.write_byte(address, lista_strings["pasos6"] & 0xff)
               #time.sleep(0.1)
@@ -410,7 +410,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            gripperSer.write(comandoBytes)
+            #gripperSer.write(comandoBytes)
             time.sleep(0.1)
 
           elif(laserState == 0.0):
@@ -419,7 +419,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            gripperSer.write(comandoBytes)
+            #gripperSer.write(comandoBytes)
             time.sleep(0.1)
           pass
 
@@ -431,7 +431,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            gripperSer.write(comandoBytes)
+            #gripperSer.write(comandoBytes)
             time.sleep(0.1)
 
           elif(gripperState == 0.0):
@@ -440,7 +440,7 @@ class ATTinyI2C(Node):
 
             comandoBytes = comando.encode()
             #print("\n")
-            gripperSer.write(comandoBytes)
+            #gripperSer.write(comandoBytes)
             time.sleep(0.1)
 
 
