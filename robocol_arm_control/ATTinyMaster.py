@@ -39,6 +39,7 @@ class ATTinyI2C(Node):
 
       global waitingACK1, waitingACK2, waitingACK3
 
+
       sentNextMsg = False
 
       while(not sentNextMsg): 
@@ -50,6 +51,7 @@ class ATTinyI2C(Node):
         else:
 
           complete1 = True
+          print("0x23 didnt recieve steps")
 
         while(not complete1):
 
@@ -57,6 +59,7 @@ class ATTinyI2C(Node):
 
           if(reading1 == 0b00111111):
              complete1 = True
+             print("0x23 done!")
           else:
             time.sleep(0.3)
 
@@ -68,6 +71,7 @@ class ATTinyI2C(Node):
         else:
 
           complete2 = True
+          print("0x24 didnt recieve steps")
 
         while(not complete2):
 
@@ -75,6 +79,7 @@ class ATTinyI2C(Node):
 
           if(reading2 == 0b01011111):
              complete2 = True
+             print("0x24 done!")
           else:
             time.sleep(0.3)
 
@@ -86,6 +91,7 @@ class ATTinyI2C(Node):
         else:
 
           complete3 = True
+          print("0x25 done!")
 
         while(not complete3):
 
@@ -93,6 +99,7 @@ class ATTinyI2C(Node):
 
           if(reading3 == 0b10011111):
              complete3 = True
+             print("0x25 done!")
           else:
             time.sleep(0.3)
 
@@ -106,6 +113,9 @@ class ATTinyI2C(Node):
           self.ACKflagPub.publish(msg)
 
           sentNextMsg = True
+          waitingACK1 = False
+          waitingACK2 = False
+          waitingACK3 = False
 
 
 
