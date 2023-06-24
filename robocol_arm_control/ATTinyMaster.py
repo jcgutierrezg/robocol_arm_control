@@ -13,11 +13,18 @@ from std_msgs.msg import Bool
 gripperState = 1.0
 laserState = 0.0
 
+waitingACK1 = False
+waitingACK2 = False
+waitingACK3 = False
+
 #nom nom nom
 
 class ATTinyI2C(Node):
 
     def __init__(self):
+
+        global waitingACK1, waitingACK2, waitingACK3
+
         super().__init__('attiny_i2c')
         #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
         self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
@@ -27,12 +34,89 @@ class ATTinyI2C(Node):
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
-        #self.done_ACK = self.create_publisher(Bool,'arm_ACK',10)
+        while(rclpy.ok()):
+
+            if(waitingACK1 or waitingACK2 or waitingACK3):
+                ACK_check(self)
+
+    def ACK_check(self):
+
+      global waitingACK1, waitingACK2, waitingACK3
+
+      sentNextMsg = False
+
+      while(not sentNextMsg): 
+
+        if(waitingACK1):
+
+          complete1 = False
+
+        else:
+
+          complete1 = True
+
+        while(not complete1):
+
+          reading1 = bus.read_byte(0x23)
+
+          if(reading1 == 0b00111111):
+             complete1 = True
+          else:
+            time.sleep(0.3)
+
+
+        if(waitingACK2):
+
+          complete2 = False
+
+        else:
+
+          complete2 = True
+
+        while(not complete2):
+
+          reading2 = bus.read_byte(0x24)
+
+          if(reading2 == 0b01011111):
+             complete2 = True
+          else:
+            time.sleep(0.3)
+
+
+        if(waitingACK3):
+
+          complete3 = False
+
+        else:
+
+          complete3 = True
+
+        while(not complete3):
+
+          reading3 = bus.read_byte(0x25)
+
+          if(reading3 == 0b10011111):
+             complete3 = True
+          else:
+            time.sleep(0.3)
+
+
+        if(complete1 and complete2 and complete3):
+
+          msg = Bool()
+
+          msg.data = True
+
+          self.ACKflagPub.publish(msg)
+
+          sentNextMsg = True
+
+
 
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
 
-        global gripperState, laserState
+        global gripperState, laserState, waitingACK1, waitingACK2, waitingACK3
 
         ACK = True
 
@@ -58,6 +142,10 @@ class ATTinyI2C(Node):
         print(steps4)
         print(steps5)
         print(steps6)
+
+        print((steps1 & 0xff))
+
+        #if((steps1 >> 8 & 0xff) == 0xFF
 
         Direccion1 = 0b00010001
         Direccion2 = 0b00010001
@@ -167,70 +255,102 @@ class ATTinyI2C(Node):
 
           bus = SMBus(1)
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
+          complete = False
+
+          while(not complete):
+
+            sentCount = 0
+            corruptData = False
+
+            #------------BYTE1-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
               bus.write_byte(address, lista_strings["direccion"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
               #print("1: ")
               #print(lista_strings["direccion"])
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte1")
-
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
+              if(reading == 0b00100001):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x23")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+            #------------BYTE2-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
               #print("2: ")
               #print(lista_strings["pasos1"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte2")
-
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
+              if(reading == 0b00100010):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x23")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+            #------------BYTE3-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos1"] & 0xff)
               #print("3: ")
               #print(lista_strings["pasos1"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte3")
-
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
+              if(reading == 0b00100100):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x23")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+             #------------BYTE4-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
               #print("4: ")
               #print(lista_strings["pasos2"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte4")
-
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
+              if(reading == 0b00101000):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x23")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+              #------------BYTE5-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos2"] & 0xff)
               #print("5: ")
               #print(lista_strings["pasos2"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte5")
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b00110000):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x23")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+              if(sentCount == 5):
+                complete = True
+
+          waitingACK1 = True
           
           print("Bytes sent to 0x23!")
         
@@ -245,79 +365,104 @@ class ATTinyI2C(Node):
           }
         bus = SMBus(1)
 
-        if(steps3 != 0 or steps4 != 0):
+        complete = False
 
-          print("Steps3: " + str(steps3))
-          print("Steps4: " + str(steps4))
-          print(Direccion2)
+        while(not complete):
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["direccion"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("1: ")
-              #print(lista_strings["direccion"])
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte1")
+          sentCount = 0
+          corruptData = False
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("2: ")
-              #print(lista_strings["pasos1"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte2")
+          #------------BYTE1-------------
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos3"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("3: ")
-              #print(lista_strings["pasos1"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte3")
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["direccion"] & 0xff)
+            #print("1: ")
+            #print(lista_strings["direccion"])
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b01000001):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x24")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("4: ")
-              #print(lista_strings["pasos2"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte4")
+          #------------BYTE2-------------
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos4"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("5: ")
-              #print(lista_strings["pasos2"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte5")
-              
-              
-          print("Bytes sent to 0x24!")
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
+            #print("2: ")
+            #print(lista_strings["pasos1"] >> 8 & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b01000010):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x24")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+          #------------BYTE3-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos3"] & 0xff)
+            #print("3: ")
+            #print(lista_strings["pasos1"] & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b01000100):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x24")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+           #------------BYTE4-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
+            #print("4: ")
+            #print(lista_strings["pasos2"] >> 8 & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b01001000):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x24")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+            #------------BYTE5-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos4"] & 0xff)
+            #print("5: ")
+            #print(lista_strings["pasos2"] & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b01010000):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x24")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+            if(sentCount == 5):
+              complete = True
+
+        waitingACK2 = True
+        
+        print("Bytes sent to 0x24!")
 
 # Motor 5 y 6
 
@@ -330,77 +475,105 @@ class ATTinyI2C(Node):
           }
         bus = SMBus(1)
 
-        if(steps5 != 0 or steps6 != 0):
-          print("Steps5: " + str(steps5))
-          print("Steps6: " + str(steps6))
-          print(Direccion3)
+        complete = False
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["direccion"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("1: ")
-              #print(lista_strings["direccion"])
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte1")
+        while(not complete):
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos5"] >> 8 & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("2: ")
-              #print(lista_strings["pasos1"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte2")
+          sentCount = 0
+          corruptData = False
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos5"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("3: ")
-              #print(lista_strings["pasos1"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte3")
+          #------------BYTE1-------------
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos6"] >> 8 & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("4: ")
-              #print(lista_strings["pasos2"] >> 8 & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte4")
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["direccion"] & 0xff)
+            #print("1: ")
+            #print(lista_strings["direccion"])
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b10000001):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x25")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
 
-          tempFlag = False
-          while(not tempFlag):
-            try:
-              bus.write_byte(address, lista_strings["pasos6"] & 0xff)
-              #time.sleep(0.1)
-              reading = bus.read_byte(address)
-              #print("5: ")
-              #print(lista_strings["pasos2"] & 0xff)
-              tempFlag = True
-            except Exception as e:
-              print(e)
-              print("Resending Byte5")
+          #------------BYTE2-------------
 
-          print("Bytes sent to 0x25!")
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
+            #print("2: ")
+            #print(lista_strings["pasos1"] >> 8 & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b10000010):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x25")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+          #------------BYTE3-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos3"] & 0xff)
+            #print("3: ")
+            #print(lista_strings["pasos1"] & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b10000100):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x25")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+           #------------BYTE4-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
+            #print("4: ")
+            #print(lista_strings["pasos2"] >> 8 & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b10001000):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x25")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+            #------------BYTE5-------------
+
+          sentFlag = False
+          while(not sentFlag and not corruptData):
+            bus.write_byte(address, lista_strings["pasos4"] & 0xff)
+            #print("5: ")
+            #print(lista_strings["pasos2"] & 0xff)
+            #time.sleep(0.1)
+            reading = bus.read_byte(address)
+            if(reading == 0b10010000):
+              sentFlag = True
+              sentCount = sentCount+1
+            else:
+              print("ATTiny data corrupted, resending all bytes on 0x25")
+              corruptData = True
+              bus.write_byte(address, 0b11111111 & 0xff)
+
+            if(sentCount == 5):
+              complete = True
+
+        waitingACK3 = True
+        
+        print("Bytes sent to 0x25!")
+
 
         if(gripper == 1.0):
           #cosaparaqueswitcheeellaser()
@@ -411,7 +584,7 @@ class ATTinyI2C(Node):
             comandoBytes = comando.encode()
             #print("\n")
             #gripperSer.write(comandoBytes)
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
           elif(laserState == 0.0):
 
@@ -420,7 +593,7 @@ class ATTinyI2C(Node):
             comandoBytes = comando.encode()
             #print("\n")
             #gripperSer.write(comandoBytes)
-            time.sleep(0.1)
+            #time.sleep(0.1)
           pass
 
         elif(gripper == 2.0):
@@ -432,7 +605,7 @@ class ATTinyI2C(Node):
             comandoBytes = comando.encode()
             #print("\n")
             #gripperSer.write(comandoBytes)
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
           elif(gripperState == 0.0):
 
@@ -441,19 +614,19 @@ class ATTinyI2C(Node):
             comandoBytes = comando.encode()
             #print("\n")
             #gripperSer.write(comandoBytes)
-            time.sleep(0.1)
+            #time.sleep(0.1)
 
 
 
-        if(ACK):
+        # if(ACK):
 
-          time.sleep(2.0)
+        #   time.sleep(3.0)
 
-          msg = Bool()
+        #   msg = Bool()
 
-          msg.data = True
+        #   msg.data = True
 
-          self.ACKflagPub.publish(msg)
+        #   self.ACKflagPub.publish(msg)
 
 
 
@@ -475,3 +648,4 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
