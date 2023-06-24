@@ -35,96 +35,13 @@ class ATTinyI2C(Node):
             10)
         self.subscription  # prevent unused variable warning
 
-    def ACK_check(self):
-
-      global waitingACK1, waitingACK2, waitingACK3
-
-
-      sentNextMsg = False
-
-      while(not sentNextMsg): 
-
-        if(waitingACK1):
-
-          complete1 = False
-
-        else:
-
-          complete1 = True
-          print("0x23 didnt recieve steps")
-
-        while(not complete1):
-
-          reading1 = bus.read_byte(0x23)
-
-          if(reading1 == 0b00111111):
-             complete1 = True
-             print("0x23 done!")
-          else:
-            time.sleep(0.3)
-
-
-        if(waitingACK2):
-
-          complete2 = False
-
-        else:
-
-          complete2 = True
-          print("0x24 didnt recieve steps")
-
-        while(not complete2):
-
-          reading2 = bus.read_byte(0x24)
-
-          if(reading2 == 0b01011111):
-             complete2 = True
-             print("0x24 done!")
-          else:
-            time.sleep(0.3)
-
-
-        if(waitingACK3):
-
-          complete3 = False
-
-        else:
-
-          complete3 = True
-          print("0x25 done!")
-
-        while(not complete3):
-
-          reading3 = bus.read_byte(0x25)
-
-          if(reading3 == 0b10011111):
-             complete3 = True
-             print("0x25 done!")
-          else:
-            time.sleep(0.3)
-
-
-        if(complete1 and complete2 and complete3):
-
-          msg = Bool()
-
-          msg.data = True
-
-          self.ACKflagPub.publish(msg)
-
-          sentNextMsg = True
-          waitingACK1 = False
-          waitingACK2 = False
-          waitingACK3 = False
-
-
 
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
 
         global gripperState, laserState, waitingACK1, waitingACK2, waitingACK3
 
-        ACK = True
+        #ACK = True
 
         angle1 = msg.position.x
         angle2 = msg.position.y
@@ -646,7 +563,82 @@ class ATTinyI2C(Node):
             #gripperSer.write(comandoBytes)
             #time.sleep(0.1)
 
+        sentNextMsg = False
 
+        while(not sentNextMsg): 
+
+          if(waitingACK1):
+
+            complete1 = False
+
+          else:
+
+            complete1 = True
+            print("0x23 didnt recieve steps")
+
+          while(not complete1):
+
+            reading1 = bus.read_byte(0x23)
+
+            if(reading1 == 0b00111111):
+               complete1 = True
+               print("0x23 done!")
+            else:
+              time.sleep(0.3)
+
+
+          if(waitingACK2):
+
+            complete2 = False
+
+          else:
+
+            complete2 = True
+            print("0x24 didnt recieve steps")
+
+          while(not complete2):
+
+            reading2 = bus.read_byte(0x24)
+
+            if(reading2 == 0b01011111):
+               complete2 = True
+               print("0x24 done!")
+            else:
+              time.sleep(0.3)
+
+
+          if(waitingACK3):
+
+            complete3 = False
+
+          else:
+
+            complete3 = True
+            print("0x25 done!")
+
+          while(not complete3):
+
+            reading3 = bus.read_byte(0x25)
+
+            if(reading3 == 0b10011111):
+               complete3 = True
+               print("0x25 done!")
+            else:
+              time.sleep(0.3)
+
+
+          if(complete1 and complete2 and complete3):
+
+            msg = Bool()
+
+            msg.data = True
+
+            self.ACKflagPub.publish(msg)
+
+            sentNextMsg = True
+            waitingACK1 = False
+            waitingACK2 = False
+            waitingACK3 = False
 
         # if(ACK):
 
