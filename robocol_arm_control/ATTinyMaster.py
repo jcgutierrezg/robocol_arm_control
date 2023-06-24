@@ -635,6 +635,8 @@ class ATTinyI2C(Node):
 
             self.ACKflagPub.publish(msg)
 
+            print("Next trajectory point please!")
+
             sentNextMsg = True
             waitingACK1 = False
             waitingACK2 = False
