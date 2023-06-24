@@ -34,10 +34,6 @@ class ATTinyI2C(Node):
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
-        while(rclpy.ok()):
-
-            if(waitingACK1 or waitingACK2 or waitingACK3):
-                ACK_check(self)
 
     def ACK_check(self):
 
@@ -637,6 +633,11 @@ def main(args=None):
     attiny_i2c = ATTinyI2C()
 
     rclpy.spin(attiny_i2c)
+
+    while(rclpy.ok()):
+
+      if(waitingACK1 or waitingACK2 or waitingACK3):
+        attiny_i2c.ACK_check()
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
