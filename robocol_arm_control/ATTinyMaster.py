@@ -375,9 +375,9 @@ class ATTinyI2C(Node):
           }
 
         if(steps3 != 0 or steps4 != 0):
-          print("Steps1: " + str(steps1))
-          print("Steps2: " + str(steps2))
-          print(Direccion1)
+          print("Steps3: " + str(steps3))
+          print("Steps4: " + str(steps4))
+          print(Direccion2)
           bus = SMBus(1)
 
           complete = False
@@ -490,9 +490,9 @@ class ATTinyI2C(Node):
           }
 
         if(steps5 != 0 or steps6 != 0):
-          print("Steps1: " + str(steps1))
-          print("Steps2: " + str(steps2))
-          print(Direccion1)
+          print("Steps5: " + str(steps5))
+          print("Steps6: " + str(steps6))
+          print(Direccion3)
           bus = SMBus(1)
 
           complete = False
@@ -523,7 +523,7 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
+              bus.write_byte(address, lista_strings["pasos5"] >> 8 & 0xff)
               #print("2: ")
               #print(lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -540,7 +540,7 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos3"] & 0xff)
+              bus.write_byte(address, lista_strings["pasos5"] & 0xff)
               #print("3: ")
               #print(lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
@@ -557,7 +557,7 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
+              bus.write_byte(address, lista_strings["pasos6"] >> 8 & 0xff)
               #print("4: ")
               #print(lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
@@ -574,7 +574,7 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos4"] & 0xff)
+              bus.write_byte(address, lista_strings["pasos6"] & 0xff)
               #print("5: ")
               #print(lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
