@@ -139,9 +139,23 @@ class ATTinyI2C(Node):
         print(steps5)
         print(steps6)
 
-        print((steps1 & 0xff))
+        if((steps1 & 0xff) == 0xFF):
+          steps1 = steps1+1
 
-        #if((steps1 >> 8 & 0xff) == 0xFF
+        if((steps2 & 0xff) == 0xFF):
+          steps2 = steps2+1
+
+        if((steps3 & 0xff) == 0xFF):
+          steps3 = steps3+1
+
+        if((steps4 & 0xff) == 0xFF):
+          steps4 = steps4+1
+
+        if((steps5 & 0xff) == 0xFF):
+          steps5 = steps5+1
+
+        if((steps6 & 0xff) == 0xFF):
+          steps6 = steps6+1
 
         Direccion1 = 0b00010001
         Direccion2 = 0b00010001
