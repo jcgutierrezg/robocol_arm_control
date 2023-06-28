@@ -44,6 +44,8 @@ class ATTinyI2C(Node):
 
         msgB.data = True
 
+        zeroFlag = False
+
         #ACK = True
 
         angle1 = msg.position.x
@@ -71,11 +73,7 @@ class ATTinyI2C(Node):
 
         if (steps1 == 0 and steps2 == 0 and steps3 == 0 and steps4 == 0 and steps5 == 0 and steps6 == 0 ):
 
-          time.sleep(1.0)
-
-          self.ACKflagPub.publish(msgB)
-
-          print("Initial zeros recieved!")
+          zeroFlag = True
 
         else:
 
@@ -652,6 +650,12 @@ class ATTinyI2C(Node):
               waitingACK1 = False
               waitingACK2 = False
               waitingACK3 = False
+
+        if(zeroFlag):
+
+          self.ACKflagPub.publish(msgB)
+
+          print("Initial zeros recieved!")
 
 
 def main(args=None):
