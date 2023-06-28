@@ -21,20 +21,6 @@ waitingACK3 = False
 
 class ATTinyI2C(Node):
 
-    def __init__(self):
-
-        global waitingACK1, waitingACK2, waitingACK3
-
-        super().__init__('attiny_i2c')
-        #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
-        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
-        self.subscription = self.create_subscription(
-            Pose,
-            'ATTinyinfo',
-            self.listener_callback,
-            10)
-        self.subscription  # prevent unused variable warning
-
     def ACK_check(self):
 
         global waitingACK1, waitingACK2, waitingACK3
@@ -118,6 +104,26 @@ class ATTinyI2C(Node):
             waitingACK2 = False
             waitingACK3 = False
 
+    def __init__(self):
+
+        global waitingACK1, waitingACK2, waitingACK3
+
+        super().__init__('attiny_i2c')
+        #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
+        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
+        self.subscription = self.create_subscription(
+            Pose,
+            'ATTinyinfo',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+        while(rclpy.ok()):
+
+          if(waitingACK1 or waitingACK2 or waitingACK3):
+            self.ACK_check()
+
+
 
     def listener_callback(self, msg):
         #self.get_logger().info('I heard: "%s"' % msg.data)
@@ -150,6 +156,8 @@ class ATTinyI2C(Node):
         print(steps6)
 
         if (steps1 == 0 and steps2 == 0 and steps3 == 0 and steps4 == 0 and steps5 == 0 and steps6 == 0 ):
+
+          time.sleep(1.0)
 
           msg = Bool()
 
@@ -665,11 +673,6 @@ def main(args=None):
     attiny_i2c = ATTinyI2C()
 
     rclpy.spin(attiny_i2c)
-
-    while(rclpy.ok()):
-
-      if(waitingACK1 or waitingACK2 or waitingACK3):
-        attiny_i2c.ACK_check()
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
