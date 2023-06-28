@@ -157,6 +157,8 @@ class ATTinyI2C(Node):
 
           self.ACKflagPub.publish(msg)
 
+          print("Initial zeros recieved!")
+
         else:
 
           if((steps1 & 0xff) == 0xFF):
