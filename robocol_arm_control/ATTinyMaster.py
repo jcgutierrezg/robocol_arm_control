@@ -23,8 +23,6 @@ class ATTinyI2C(Node):
 
     def __init__(self):
 
-        global waitingACK1, waitingACK2, waitingACK3
-
         super().__init__('attiny_i2c')
         #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
         self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
@@ -34,95 +32,7 @@ class ATTinyI2C(Node):
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning
-
-        while(rclpy.ok()):
-
-          if(waitingACK1 or waitingACK2 or waitingACK3):
-            self.ACK_check()
-
-    def ACK_check(self):
-
-        global waitingACK1, waitingACK2, waitingACK3
-
-        sentNextMsg = False
-
-        while(not sentNextMsg): 
-
-          if(waitingACK1):
-
-            complete1 = False
-
-          else:
-
-            complete1 = True
-            print("0x23 didnt recieve steps")
-
-          while(not complete1):
-
-            reading1 = bus.read_byte(0x23)
-
-            if(reading1 == 0b00111111):
-               complete1 = True
-               print("0x23 done!")
-            else:
-              time.sleep(0.3)
-
-
-          if(waitingACK2):
-
-            complete2 = False
-
-          else:
-
-            complete2 = True
-            print("0x24 didnt recieve steps")
-
-          while(not complete2):
-
-            reading2 = bus.read_byte(0x24)
-
-            if(reading2 == 0b01011111):
-               complete2 = True
-               print("0x24 done!")
-            else:
-              time.sleep(0.3)
-
-
-          if(waitingACK3):
-
-            complete3 = False
-
-          else:
-
-            complete3 = True
-            print("0x25 done!")
-
-          while(not complete3):
-
-            reading3 = bus.read_byte(0x25)
-
-            if(reading3 == 0b10011111):
-               complete3 = True
-               print("0x25 done!")
-            else:
-              time.sleep(0.3)
-
-
-          if(complete1 and complete2 and complete3):
-
-            msg = Bool()
-
-            msg.data = True
-
-            self.ACKflagPub.publish(msg)
-
-            print("Next trajectory point please!")
-
-            sentNextMsg = True
-            waitingACK1 = False
-            waitingACK2 = False
-            waitingACK3 = False
-
+        
 
 
     def listener_callback(self, msg):
@@ -665,6 +575,87 @@ class ATTinyI2C(Node):
             #print("\n")
             #gripperSer.write(comandoBytes)
             #time.sleep(0.1)
+
+          if(waitingACK1 or waitingACK2 or waitingACK3):
+
+            sentNextMsg = False
+
+            while(not sentNextMsg): 
+
+              if(waitingACK1):
+
+                complete1 = False
+
+              else:
+
+                complete1 = True
+                print("0x23 didnt recieve steps")
+
+              while(not complete1):
+
+                reading1 = bus.read_byte(0x23)
+
+                if(reading1 == 0b00111111):
+                   complete1 = True
+                   print("0x23 done!")
+                else:
+                  time.sleep(0.3)
+
+
+              if(waitingACK2):
+
+                complete2 = False
+
+              else:
+
+                complete2 = True
+                print("0x24 didnt recieve steps")
+
+              while(not complete2):
+
+                reading2 = bus.read_byte(0x24)
+
+                if(reading2 == 0b01011111):
+                   complete2 = True
+                   print("0x24 done!")
+                else:
+                  time.sleep(0.3)
+
+
+              if(waitingACK3):
+
+                complete3 = False
+
+              else:
+
+                complete3 = True
+                print("0x25 done!")
+
+              while(not complete3):
+
+                reading3 = bus.read_byte(0x25)
+
+                if(reading3 == 0b10011111):
+                   complete3 = True
+                   print("0x25 done!")
+                else:
+                  time.sleep(0.3)
+
+
+              if(complete1 and complete2 and complete3):
+
+                msg = Bool()
+
+                msg.data = True
+
+                self.ACKflagPub.publish(msg)
+
+                print("Next trajectory point please!")
+
+                sentNextMsg = True
+                waitingACK1 = False
+                waitingACK2 = False
+                waitingACK3 = False
 
 
 def main(args=None):
