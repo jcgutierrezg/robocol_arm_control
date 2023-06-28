@@ -51,7 +51,7 @@ class ATTinyI2C(Node):
 
         gripper = msg.orientation.w
 
-        steps1 = int(round(angle1*20.0*200.0/360.0))
+        steps1 = int(round(angle1*46.656*200.0/360.0))
         steps2 = int(round(angle2*46.656*200.0/360.0))
         steps3 = int(round(angle3*46.656*200.0/360.0))
         steps4 = int(round(angle4*19.203*200.0/360.0))
