@@ -66,130 +66,251 @@ class ATTinyI2C(Node):
         print(steps5)
         print(steps6)
 
-        if((steps1 & 0xff) == 0xFF):
-          steps1 = steps1+1
+        if (steps1 == 0 and steps2 == 0 and steps3 == 0 and steps4 == 0 and steps5 == 0 and steps6 == 0 ):
 
-        if((steps2 & 0xff) == 0xFF):
-          steps2 = steps2+1
+          msg = Bool()
 
-        if((steps3 & 0xff) == 0xFF):
-          steps3 = steps3+1
+          msg.data = True
 
-        if((steps4 & 0xff) == 0xFF):
-          steps4 = steps4+1
+          self.ACKflagPub.publish(msg)
 
-        if((steps5 & 0xff) == 0xFF):
-          steps5 = steps5+1
+        else:
 
-        if((steps6 & 0xff) == 0xFF):
-          steps6 = steps6+1
 
-        Direccion1 = 0b00010001
-        Direccion2 = 0b00010001
-        Direccion3 = 0b00010001
+          if((steps1 & 0xff) == 0xFF):
+            steps1 = steps1+1
 
-# Motor 1 y 2
+          if((steps2 & 0xff) == 0xFF):
+            steps2 = steps2+1
 
-        if(steps1>0 and steps2 == 0):
-          Direccion1=0b00010001
+          if((steps3 & 0xff) == 0xFF):
+            steps3 = steps3+1
 
-        elif(steps1<0 and steps2 == 0):
-          Direccion1=0b00110001
+          if((steps4 & 0xff) == 0xFF):
+            steps4 = steps4+1
 
-        elif(steps2>0 and steps1 == 0):
-          Direccion1=0b00010011
+          if((steps5 & 0xff) == 0xFF):
+            steps5 = steps5+1
 
-        elif(steps2<0 and steps1 == 0):
-          Direccion1=0b00010001
+          if((steps6 & 0xff) == 0xFF):
+            steps6 = steps6+1
 
-        elif(steps2>0 and steps1 > 0):
-          Direccion1=0b00010011
+          Direccion1 = 0b00010001
+          Direccion2 = 0b00010001
+          Direccion3 = 0b00010001
 
-        elif(steps2<0 and steps1 > 0):
-          Direccion1=0b00010001
+  # Motor 1 y 2
 
-        elif(steps2>0 and steps1 < 0):
-          Direccion1=0b00110011
+          if(steps1>0 and steps2 == 0):
+            Direccion1=0b00010001
 
-        elif(steps2<0 and steps1 < 0):
-          Direccion1=0b00110001
+          elif(steps1<0 and steps2 == 0):
+            Direccion1=0b00110001
 
-        print(Direccion1)
+          elif(steps2>0 and steps1 == 0):
+            Direccion1=0b00010011
 
-# Motor 3 y 4
+          elif(steps2<0 and steps1 == 0):
+            Direccion1=0b00010001
 
-        if(steps3>0 and steps4 == 0):
-          Direccion2=0b00010001
+          elif(steps2>0 and steps1 > 0):
+            Direccion1=0b00010011
 
-        elif(steps3<0 and steps4 == 0):
-          Direccion2=0b00110001
+          elif(steps2<0 and steps1 > 0):
+            Direccion1=0b00010001
 
-        elif(steps4>0 and steps3 == 0):
-          Direccion2=0b00010011
+          elif(steps2>0 and steps1 < 0):
+            Direccion1=0b00110011
 
-        elif(steps4<0 and steps3 == 0):
-          Direccion2=0b00010001
+          elif(steps2<0 and steps1 < 0):
+            Direccion1=0b00110001
 
-        elif(steps4>0 and steps3 > 0):
-          Direccion2=0b00010011
-
-        elif(steps4<0 and steps3 > 0):
-          Direccion2=0b00010001
-
-        elif(steps4>0 and steps3 < 0):
-          Direccion2=0b00110011
-
-        elif(steps4<0 and steps3 < 0):
-          Direccion2=0b00110001
-
-# Motor 5 y 6
-
-        if(steps5>0 and steps6 == 0):
-          Direccion3=0b00110001
-
-        elif(steps5<0 and steps6 == 0):
-          Direccion3=0b00010001
-
-        elif(steps6>0 and steps5 == 0):
-          Direccion3=0b00110011
-
-        elif(steps6<0 and steps5 == 0):
-          Direccion3=0b00110001
-
-        elif(steps6>0 and steps5 > 0):
-          Direccion3=0b00110011
-
-        elif(steps6<0 and steps5 > 0):
-          Direccion3=0b00110001
-
-        elif(steps6>0 and steps5 < 0):
-          Direccion3=0b00010011
-
-        elif(steps6<0 and steps5 < 0):
-          Direccion3=0b00010001
-
-        steps1 = abs(steps1)
-        steps2 = abs(steps2)
-        steps3 = abs(steps3)
-        steps4 = abs(steps4)
-        steps5 = abs(steps5)
-        steps6 = abs(steps6)
-
-# Motor 1 y 2
-
-        address = 0x23
-
-        lista_strings = {
-            "direccion": Direccion1,
-            "pasos1": steps1,
-            "pasos2": steps2
-          }
-
-        if(steps1 != 0 or steps2 != 0):
-          print("Steps1: " + str(steps1))
-          print("Steps2: " + str(steps2))
           print(Direccion1)
 
+  # Motor 3 y 4
+
+          if(steps3>0 and steps4 == 0):
+            Direccion2=0b00010001
+
+          elif(steps3<0 and steps4 == 0):
+            Direccion2=0b00110001
+
+          elif(steps4>0 and steps3 == 0):
+            Direccion2=0b00010011
+
+          elif(steps4<0 and steps3 == 0):
+            Direccion2=0b00010001
+
+          elif(steps4>0 and steps3 > 0):
+            Direccion2=0b00010011
+
+          elif(steps4<0 and steps3 > 0):
+            Direccion2=0b00010001
+
+          elif(steps4>0 and steps3 < 0):
+            Direccion2=0b00110011
+
+          elif(steps4<0 and steps3 < 0):
+            Direccion2=0b00110001
+
+  # Motor 5 y 6
+
+          if(steps5>0 and steps6 == 0):
+            Direccion3=0b00110001
+
+          elif(steps5<0 and steps6 == 0):
+            Direccion3=0b00010001
+
+          elif(steps6>0 and steps5 == 0):
+            Direccion3=0b00110011
+
+          elif(steps6<0 and steps5 == 0):
+            Direccion3=0b00110001
+
+          elif(steps6>0 and steps5 > 0):
+            Direccion3=0b00110011
+
+          elif(steps6<0 and steps5 > 0):
+            Direccion3=0b00110001
+
+          elif(steps6>0 and steps5 < 0):
+            Direccion3=0b00010011
+
+          elif(steps6<0 and steps5 < 0):
+            Direccion3=0b00010001
+
+          steps1 = abs(steps1)
+          steps2 = abs(steps2)
+          steps3 = abs(steps3)
+          steps4 = abs(steps4)
+          steps5 = abs(steps5)
+          steps6 = abs(steps6)
+
+  # Motor 1 y 2
+
+          address = 0x23
+
+          lista_strings = {
+              "direccion": Direccion1,
+              "pasos1": steps1,
+              "pasos2": steps2
+            }
+
+          if(steps1 != 0 or steps2 != 0):
+            print("Steps1: " + str(steps1))
+            print("Steps2: " + str(steps2))
+            print(Direccion1)
+
+            bus = SMBus(1)
+
+            complete = False
+
+            while(not complete):
+
+              sentCount = 0
+              corruptData = False
+
+              #------------BYTE1-------------
+
+              sentFlag = False
+              while(not sentFlag and not corruptData):
+                bus.write_byte(address, lista_strings["direccion"] & 0xff)
+                #print("1: ")
+                #print(lista_strings["direccion"])
+                #time.sleep(0.1)
+                reading = bus.read_byte(address)
+                if(reading == 0b00100001):
+                  sentFlag = True
+                  sentCount = sentCount+1
+                else:
+                  print("ATTiny data corrupted, resending all bytes on 0x23")
+                  corruptData = True
+                  bus.write_byte(address, 0b11111111 & 0xff)
+
+              #------------BYTE2-------------
+
+              sentFlag = False
+              while(not sentFlag and not corruptData):
+                bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
+                #print("2: ")
+                #print(lista_strings["pasos1"] >> 8 & 0xff)
+                #time.sleep(0.1)
+                reading = bus.read_byte(address)
+                if(reading == 0b00100010):
+                  sentFlag = True
+                  sentCount = sentCount+1
+                else:
+                  print("ATTiny data corrupted, resending all bytes on 0x23")
+                  corruptData = True
+                  bus.write_byte(address, 0b11111111 & 0xff)
+
+              #------------BYTE3-------------
+
+              sentFlag = False
+              while(not sentFlag and not corruptData):
+                bus.write_byte(address, lista_strings["pasos1"] & 0xff)
+                #print("3: ")
+                #print(lista_strings["pasos1"] & 0xff)
+                #time.sleep(0.1)
+                reading = bus.read_byte(address)
+                if(reading == 0b00100100):
+                  sentFlag = True
+                  sentCount = sentCount+1
+                else:
+                  print("ATTiny data corrupted, resending all bytes on 0x23")
+                  corruptData = True
+                  bus.write_byte(address, 0b11111111 & 0xff)
+
+               #------------BYTE4-------------
+
+              sentFlag = False
+              while(not sentFlag and not corruptData):
+                bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
+                #print("4: ")
+                #print(lista_strings["pasos2"] >> 8 & 0xff)
+                #time.sleep(0.1)
+                reading = bus.read_byte(address)
+                if(reading == 0b00101000):
+                  sentFlag = True
+                  sentCount = sentCount+1
+                else:
+                  print("ATTiny data corrupted, resending all bytes on 0x23")
+                  corruptData = True
+                  bus.write_byte(address, 0b11111111 & 0xff)
+
+                #------------BYTE5-------------
+
+              sentFlag = False
+              while(not sentFlag and not corruptData):
+                bus.write_byte(address, lista_strings["pasos2"] & 0xff)
+                #print("5: ")
+                #print(lista_strings["pasos2"] & 0xff)
+                #time.sleep(0.1)
+                reading = bus.read_byte(address)
+                if(reading == 0b00110000):
+                  sentFlag = True
+                  sentCount = sentCount+1
+                else:
+                  print("ATTiny data corrupted, resending all bytes on 0x23")
+                  corruptData = True
+                  bus.write_byte(address, 0b11111111 & 0xff)
+
+                if(sentCount == 5):
+                  complete = True
+
+            waitingACK1 = True
+            
+            print("Bytes sent to 0x23!")
+          
+  # Motor 3 y 4
+
+          address = 0x24
+
+          lista_strings = {
+              "direccion": Direccion2,
+              "pasos3": steps3,
+              "pasos4": steps4
+            }
           bus = SMBus(1)
 
           complete = False
@@ -208,11 +329,11 @@ class ATTinyI2C(Node):
               #print(lista_strings["direccion"])
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              if(reading == 0b00100001):
+              if(reading == 0b01000001):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
-                print("ATTiny data corrupted, resending all bytes on 0x23")
+                print("ATTiny data corrupted, resending all bytes on 0x24")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
 
@@ -220,16 +341,16 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos1"] >> 8 & 0xff)
+              bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
               #print("2: ")
               #print(lista_strings["pasos1"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              if(reading == 0b00100010):
+              if(reading == 0b01000010):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
-                print("ATTiny data corrupted, resending all bytes on 0x23")
+                print("ATTiny data corrupted, resending all bytes on 0x24")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
 
@@ -237,16 +358,16 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos1"] & 0xff)
+              bus.write_byte(address, lista_strings["pasos3"] & 0xff)
               #print("3: ")
               #print(lista_strings["pasos1"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              if(reading == 0b00100100):
+              if(reading == 0b01000100):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
-                print("ATTiny data corrupted, resending all bytes on 0x23")
+                print("ATTiny data corrupted, resending all bytes on 0x24")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
 
@@ -254,16 +375,16 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos2"] >> 8 & 0xff)
+              bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
               #print("4: ")
               #print(lista_strings["pasos2"] >> 8 & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              if(reading == 0b00101000):
+              if(reading == 0b01001000):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
-                print("ATTiny data corrupted, resending all bytes on 0x23")
+                print("ATTiny data corrupted, resending all bytes on 0x24")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
 
@@ -271,30 +392,27 @@ class ATTinyI2C(Node):
 
             sentFlag = False
             while(not sentFlag and not corruptData):
-              bus.write_byte(address, lista_strings["pasos2"] & 0xff)
+              bus.write_byte(address, lista_strings["pasos4"] & 0xff)
               #print("5: ")
               #print(lista_strings["pasos2"] & 0xff)
               #time.sleep(0.1)
               reading = bus.read_byte(address)
-              if(reading == 0b00110000):
+              if(reading == 0b01010000):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
-                print("ATTiny data corrupted, resending all bytes on 0x23")
+                print("ATTiny data corrupted, resending all bytes on 0x24")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
 
               if(sentCount == 5):
                 complete = True
 
-          waitingACK1 = True
+          waitingACK2 = True
           
-          print("Bytes sent to 0x23!")
-        
-# Motor 3 y 4
+          print("Bytes sent to 0x24!")
 
-        address = 0x24
-
+<<<<<<< Updated upstream
         lista_strings = {
             "direccion": Direccion2,
             "pasos3": steps3,
@@ -405,11 +523,61 @@ class ATTinyI2C(Node):
           waitingACK2 = True
           
           print("Bytes sent to 0x24!")
+=======
+  # Motor 5 y 6
 
-# Motor 5 y 6
+          address = 0x25
 
-        address = 0x25
+          lista_strings = {
+              "direccion": Direccion3,
+              "pasos5": steps5,
+              "pasos6": steps6
+            }
+          bus = SMBus(1)
 
+          complete = False
+
+          while(not complete):
+
+            sentCount = 0
+            corruptData = False
+
+            #------------BYTE1-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["direccion"] & 0xff)
+              #print("1: ")
+              #print(lista_strings["direccion"])
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b10000001):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x25")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+>>>>>>> Stashed changes
+
+            #------------BYTE2-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos3"] >> 8 & 0xff)
+              #print("2: ")
+              #print(lista_strings["pasos1"] >> 8 & 0xff)
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b10000010):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x25")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+<<<<<<< Updated upstream
         lista_strings = {
             "direccion": Direccion3,
             "pasos5": steps5,
@@ -439,12 +607,59 @@ class ATTinyI2C(Node):
               #time.sleep(0.1)
               reading = bus.read_byte(address)
               if(reading == 0b10000001):
+=======
+            #------------BYTE3-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos3"] & 0xff)
+              #print("3: ")
+              #print(lista_strings["pasos1"] & 0xff)
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b10000100):
                 sentFlag = True
                 sentCount = sentCount+1
               else:
                 print("ATTiny data corrupted, resending all bytes on 0x25")
                 corruptData = True
                 bus.write_byte(address, 0b11111111 & 0xff)
+
+             #------------BYTE4-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos4"] >> 8 & 0xff)
+              #print("4: ")
+              #print(lista_strings["pasos2"] >> 8 & 0xff)
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b10001000):
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x25")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+
+              #------------BYTE5-------------
+
+            sentFlag = False
+            while(not sentFlag and not corruptData):
+              bus.write_byte(address, lista_strings["pasos4"] & 0xff)
+              #print("5: ")
+              #print(lista_strings["pasos2"] & 0xff)
+              #time.sleep(0.1)
+              reading = bus.read_byte(address)
+              if(reading == 0b10010000):
+>>>>>>> Stashed changes
+                sentFlag = True
+                sentCount = sentCount+1
+              else:
+                print("ATTiny data corrupted, resending all bytes on 0x25")
+                corruptData = True
+                bus.write_byte(address, 0b11111111 & 0xff)
+<<<<<<< Updated upstream
 
             #------------BYTE2-------------
 
@@ -517,6 +732,12 @@ class ATTinyI2C(Node):
               if(sentCount == 5):
                 complete = True
 
+=======
+
+              if(sentCount == 5):
+                complete = True
+
+>>>>>>> Stashed changes
           waitingACK3 = True
           
           print("Bytes sent to 0x25!")
@@ -641,18 +862,6 @@ class ATTinyI2C(Node):
             waitingACK1 = False
             waitingACK2 = False
             waitingACK3 = False
-
-        # if(ACK):
-
-        #   time.sleep(3.0)
-
-        #   msg = Bool()
-
-        #   msg.data = True
-
-        #   self.ACKflagPub.publish(msg)
-
-
 
 
 def main(args=None):
