@@ -21,6 +21,25 @@ waitingACK3 = False
 
 class ATTinyI2C(Node):
 
+    def __init__(self):
+
+        global waitingACK1, waitingACK2, waitingACK3
+
+        super().__init__('attiny_i2c')
+        #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
+        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
+        self.subscription = self.create_subscription(
+            Pose,
+            'ATTinyinfo',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+        while(rclpy.ok()):
+
+          if(waitingACK1 or waitingACK2 or waitingACK3):
+            self.ACK_check()
+
     def ACK_check(self):
 
         global waitingACK1, waitingACK2, waitingACK3
@@ -103,25 +122,6 @@ class ATTinyI2C(Node):
             waitingACK1 = False
             waitingACK2 = False
             waitingACK3 = False
-
-    def __init__(self):
-
-        global waitingACK1, waitingACK2, waitingACK3
-
-        super().__init__('attiny_i2c')
-        #gripperSer = serial.Serial("/dev/ttyUSB0", baudrate=9600) #Modificar el puerto serie de ser necesario
-        self.ACKflagPub = self.create_publisher(Bool,'robocol/arm/next_position',10)
-        self.subscription = self.create_subscription(
-            Pose,
-            'ATTinyinfo',
-            self.listener_callback,
-            10)
-        self.subscription  # prevent unused variable warning
-
-        while(rclpy.ok()):
-
-          if(waitingACK1 or waitingACK2 or waitingACK3):
-            self.ACK_check()
 
 
 
