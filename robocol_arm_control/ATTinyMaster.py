@@ -40,9 +40,9 @@ class ATTinyI2C(Node):
 
         global gripperState, laserState, waitingACK1, waitingACK2, waitingACK3
 
-        msg = Bool()
+        msgB = Bool()
 
-        msg.data = True
+        msgB.data = True
 
         #ACK = True
 
@@ -73,11 +73,9 @@ class ATTinyI2C(Node):
 
           time.sleep(1.0)
 
-          self.ACKflagPub.publish(msg)
+          self.ACKflagPub.publish(msgB)
 
           print("Initial zeros recieved!")
-
-          msg.data = False
 
         else:
 
@@ -646,7 +644,7 @@ class ATTinyI2C(Node):
 
             if(complete1 and complete2 and complete3):
 
-              self.ACKflagPub.publish(msg)
+              self.ACKflagPub.publish(msgB)
 
               print("Next trajectory point please!")
 
